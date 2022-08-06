@@ -1,15 +1,52 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
+from uuid import uuid4 as uuid
+
+
+# Entities
+from models.entities.movie import Movie
 # Models
-from models.movieMode import MovieModel
+from models.movieModel import MovieModel
+
+main = Blueprint('movie_blueprint', __name__)
 
 
-main=Blueprint("movie_blueprint", __name__)
-
-@main.route("/")
+@main.route('/')
 def get_movies():
     try:
-        movies=MovieModel.get_movies()
+        movies = MovieModel.get_movies()
         return jsonify(movies)
     except Exception as ex:
-        return jsonify({"message": str(ex)}), 500
+        return jsonify({'message': str(ex)}), 500
+
+
+@main.route('/<id>')
+def get_movie(id):
+    try:
+        movie = MovieModel.get_movie(id)
+        if movie != None:
+            return jsonify(movie)
+        else:
+            return jsonify({}), 404
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500
+
+
+@main.route('/add', methods=['POST'])
+def add_movie():
+    try:
+        title = request.json['title'],
+        duration = int(request.json['duration'])
+        released = request.json['released']
+        id = uuid()
+        movie = Movie(str(id), title, duration, released)
+
+        affected_rows = MovieModel.add_movie(movie)
+
+        if affected_rows == 1:
+            return jsonify(movie.id)
+        else:
+            return jsonify({"message": "Error on insert"}), 500
+
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500

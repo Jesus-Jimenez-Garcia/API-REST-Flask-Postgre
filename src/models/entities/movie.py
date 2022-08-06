@@ -2,7 +2,7 @@ from utils.dateFormat import DateFormat
 
 class Movie():
 
-    def __init__(self,id,title=None,duration=None,released=None)-> None:
+    def __init__(self,id,title=None,duration=None,released=None):
         self.id=id
         self.title=title
         self.duration=duration
