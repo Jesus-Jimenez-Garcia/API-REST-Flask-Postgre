@@ -1,10 +1,13 @@
 from flask import Flask
+from flask_cors import CORS
 from config import config
 
 # Routes
 from routes import movie
 
 app = Flask(__name__)
+
+CORS(app, resources={"*":{"origins":"http://localhost:3000"}})
 
 def page_not_found(error):
     return "<h1>Not found page</h1>", 404
